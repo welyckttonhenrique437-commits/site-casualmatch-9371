@@ -73,7 +73,7 @@ async function handleSubscriptionCreated(data: any) {
 
   // Buscar usuário pelo email
   const { data: user } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('id')
     .eq('email', customer_email)
     .single();
@@ -84,23 +84,12 @@ async function handleSubscriptionCreated(data: any) {
   }
 
   // Criar registro de assinatura
-  await supabase.from('subscriptions').insert([
+  await supabase.from('assinaturas').insert([
     {
-      user_id: user.id,
+      usuario_id: user.id,
       kiwify_subscription_id: subscription_id,
       status: 'pending',
       valor: amount / 100, // Kiwify envia em centavos
-    },
-  ]);
-
-  // Criar registro de transação
-  await supabase.from('transactions').insert([
-    {
-      user_id: user.id,
-      kiwify_transaction_id: subscription_id,
-      tipo: 'subscription',
-      valor: amount / 100,
-      status: 'pending',
     },
   ]);
 }
@@ -115,7 +104,7 @@ async function handleSubscriptionPaid(data: any) {
 
   // Buscar usuário pelo email
   const { data: user } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('id')
     .eq('email', customer_email)
     .single();
@@ -127,7 +116,7 @@ async function handleSubscriptionPaid(data: any) {
 
   // Atualizar status da assinatura
   await supabase
-    .from('subscriptions')
+    .from('assinaturas')
     .update({
       status: 'active',
       proximo_pagamento: next_payment_date,
@@ -137,21 +126,12 @@ async function handleSubscriptionPaid(data: any) {
 
   // Atualizar status do usuário para ATIVO
   await supabase
-    .from('users')
+    .from('usuarios')
     .update({
       status: 'ativo',
       atualizado_em: new Date().toISOString(),
     })
     .eq('id', user.id);
-
-  // Atualizar transação
-  await supabase
-    .from('transactions')
-    .update({
-      status: 'approved',
-      aprovado_em: new Date().toISOString(),
-    })
-    .eq('kiwify_transaction_id', subscription_id);
 
   console.log('🎉 Acesso liberado para:', customer_email);
 
@@ -168,7 +148,7 @@ async function handleSubscriptionCanceled(data: any) {
 
   // Atualizar status da assinatura
   await supabase
-    .from('subscriptions')
+    .from('assinaturas')
     .update({
       status: 'canceled',
       atualizado_em: new Date().toISOString(),
@@ -177,14 +157,14 @@ async function handleSubscriptionCanceled(data: any) {
 
   // Buscar usuário e atualizar status
   const { data: user } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('id')
     .eq('email', customer_email)
     .single();
 
   if (user) {
     await supabase
-      .from('users')
+      .from('usuarios')
       .update({
         status: 'suspenso',
         atualizado_em: new Date().toISOString(),
@@ -203,7 +183,7 @@ async function handleSubscriptionExpired(data: any) {
 
   // Atualizar status da assinatura
   await supabase
-    .from('subscriptions')
+    .from('assinaturas')
     .update({
       status: 'expired',
       atualizado_em: new Date().toISOString(),
@@ -212,14 +192,14 @@ async function handleSubscriptionExpired(data: any) {
 
   // Buscar usuário e atualizar status
   const { data: user } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('id')
     .eq('email', customer_email)
     .single();
 
   if (user) {
     await supabase
-      .from('users')
+      .from('usuarios')
       .update({
         status: 'suspenso',
         atualizado_em: new Date().toISOString(),
@@ -238,31 +218,21 @@ async function handleSubscriptionFailed(data: any) {
 
   // Atualizar status da assinatura
   await supabase
-    .from('subscriptions')
+    .from('assinaturas')
     .update({
       status: 'failed',
       atualizado_em: new Date().toISOString(),
     })
     .eq('kiwify_subscription_id', subscription_id);
 
-  // Criar transação de falha
+  // Buscar usuário
   const { data: user } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('id')
     .eq('email', customer_email)
     .single();
 
   if (user) {
-    await supabase.from('transactions').insert([
-      {
-        user_id: user.id,
-        kiwify_transaction_id: `${subscription_id}_failed_${Date.now()}`,
-        tipo: 'renewal',
-        valor: 19.90,
-        status: 'refused',
-      },
-    ]);
-
     // Manter usuário ativo por período de carência (7 dias)
     // TODO: Implementar lógica de carência
   }

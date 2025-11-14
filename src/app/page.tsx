@@ -15,12 +15,22 @@ export default function Home() {
               CasualMatch
             </h1>
           </div>
-          <Link
-            href="/cadastro"
-            className="px-6 py-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/50"
-          >
-            Entrar Agora
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/login"
+              prefetch={false}
+              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+            >
+              Entrar
+            </Link>
+            <Link
+              href="/cadastro"
+              prefetch={false}
+              className="px-6 py-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/50"
+            >
+              Começar Agora
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -46,6 +56,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
             <Link
               href="/cadastro"
+              prefetch={false}
               className="px-8 py-4 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-2xl shadow-red-500/50 w-full sm:w-auto"
             >
               Entre agora e descubra quem está online perto de você 🔥
@@ -53,7 +64,7 @@ export default function Home() {
           </div>
 
           <p className="text-sm text-gray-500">
-            Acesso exclusivo por apenas <span className="text-red-400 font-bold">R$ 19,90</span> (pagamento único)
+            Assinatura mensal por apenas <span className="text-red-400 font-bold">R$ 19,90/mês</span> • Cancele quando quiser
           </p>
         </div>
       </section>
@@ -93,6 +104,65 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl md:text-4xl font-bold mb-4">
+              Plano Simples e Transparente
+            </h3>
+            <p className="text-gray-400">
+              Sem taxas ocultas. Cancele quando quiser.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-red-900/20 to-pink-900/20 border-2 border-red-500/40 rounded-3xl p-8 md:p-12">
+            <div className="text-center mb-8">
+              <div className="inline-block px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-full text-red-400 text-sm font-semibold mb-4">
+                ⭐ Mais Popular
+              </div>
+              <h4 className="text-2xl font-bold mb-2">Assinatura Mensal</h4>
+              <div className="flex items-baseline justify-center gap-2 mb-4">
+                <span className="text-5xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+                  R$ 19,90
+                </span>
+                <span className="text-gray-400">/mês</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Renovação automática • Cancele quando quiser
+              </p>
+            </div>
+
+            <ul className="space-y-4 mb-8">
+              {[
+                "Acesso total ao feed de conexões",
+                "Chat privado ilimitado",
+                "Upload de fotos e vídeos",
+                "Busca avançada por localização",
+                "Perfil completo e personalizável",
+                "Notificações em tempo real",
+                "Suporte prioritário",
+              ].map((feature, index) => (
+                <li key={index} className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-4 h-4 text-red-400" />
+                  </div>
+                  <span className="text-gray-300">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/cadastro"
+              prefetch={false}
+              className="block w-full py-4 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 rounded-lg font-bold text-lg text-center transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/50"
+            >
+              Começar Agora
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto bg-gradient-to-r from-red-600 to-pink-600 rounded-3xl p-12 text-center shadow-2xl shadow-red-500/50">
@@ -104,6 +174,7 @@ export default function Home() {
           </p>
           <Link
             href="/cadastro"
+            prefetch={false}
             className="inline-block px-10 py-4 bg-black hover:bg-gray-900 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105"
           >
             Começar Agora

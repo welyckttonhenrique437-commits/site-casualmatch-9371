@@ -5,6 +5,37 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Flame, ArrowLeft, Check } from "lucide-react";
 
+// Lista completa de cidades do Brasil por estado
+const cidadesPorEstado: Record<string, string[]> = {
+  AC: ["Rio Branco", "Cruzeiro do Sul", "Sena Madureira", "Tarauacá", "Feijó", "Senador Guiomard", "Plácido de Castro", "Brasiléia", "Xapuri", "Epitaciolândia"],
+  AL: ["Maceió", "Arapiraca", "Palmeira dos Índios", "Rio Largo", "Penedo", "União dos Palmares", "São Miguel dos Campos", "Santana do Ipanema", "Delmiro Gouveia", "Coruripe"],
+  AP: ["Macapá", "Santana", "Laranjal do Jari", "Oiapoque", "Mazagão", "Porto Grande", "Tartarugalzinho", "Vitória do Jari", "Pedra Branca do Amapari", "Calçoene"],
+  AM: ["Manaus", "Parintins", "Itacoatiara", "Manacapuru", "Coari", "Tefé", "Tabatinga", "Maués", "Humaitá", "São Gabriel da Cachoeira"],
+  BA: ["Salvador", "Feira de Santana", "Vitória da Conquista", "Camaçari", "Itabuna", "Juazeiro", "Lauro de Freitas", "Ilhéus", "Jequié", "Teixeira de Freitas", "Alagoinhas", "Barreiras", "Paulo Afonso", "Simões Filho", "Santo Antônio de Jesus"],
+  CE: ["Fortaleza", "Caucaia", "Juazeiro do Norte", "Maracanaú", "Sobral", "Crato", "Itapipoca", "Maranguape", "Iguatu", "Quixadá", "Canindé", "Pacajus", "Aquiraz", "Crateús", "Russas"],
+  DF: ["Brasília", "Taguatinga", "Ceilândia", "Samambaia", "Planaltina", "Águas Claras", "Gama", "Santa Maria", "Recanto das Emas", "Sobradinho"],
+  ES: ["Vitória", "Vila Velha", "Serra", "Cariacica", "Viana", "Cachoeiro de Itapemirim", "Linhares", "São Mateus", "Colatina", "Guarapari", "Aracruz", "Venda Nova do Imigrante", "Domingos Martins", "Afonso Cláudio", "Santa Teresa"],
+  GO: ["Goiânia", "Aparecida de Goiânia", "Anápolis", "Rio Verde", "Luziânia", "Águas Lindas de Goiás", "Valparaíso de Goiás", "Trindade", "Formosa", "Novo Gama", "Itumbiara", "Senador Canedo", "Catalão", "Jataí", "Planaltina"],
+  MA: ["São Luís", "Imperatriz", "São José de Ribamar", "Timon", "Caxias", "Codó", "Paço do Lumiar", "Açailândia", "Bacabal", "Balsas", "Santa Inês", "Pinheiro", "Pedreiras", "Chapadinha", "Barra do Corda"],
+  MT: ["Cuiabá", "Várzea Grande", "Rondonópolis", "Sinop", "Tangará da Serra", "Cáceres", "Sorriso", "Lucas do Rio Verde", "Barra do Garças", "Primavera do Leste", "Alta Floresta", "Pontes e Lacerda", "Juína", "Colíder", "Nova Mutum"],
+  MS: ["Campo Grande", "Dourados", "Três Lagoas", "Corumbá", "Ponta Porã", "Aquidauana", "Nova Andradina", "Maracaju", "Sidrolândia", "Naviraí", "Paranaíba", "Coxim", "Rio Brilhante", "Amambai", "São Gabriel do Oeste"],
+  MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora", "Betim", "Montes Claros", "Ribeirão das Neves", "Uberaba", "Governador Valadares", "Ipatinga", "Santa Luzia", "Sete Lagoas", "Divinópolis", "Ibirité", "Poços de Caldas", "Patos de Minas", "Teófilo Otoni", "Sabará", "Pouso Alegre", "Barbacena"],
+  PA: ["Belém", "Ananindeua", "Santarém", "Marabá", "Castanhal", "Parauapebas", "Itaituba", "Cametá", "Bragança", "Abaetetuba", "Marituba", "Altamira", "Tucuruí", "Paragominas", "Redenção"],
+  PB: ["João Pessoa", "Campina Grande", "Santa Rita", "Patos", "Bayeux", "Sousa", "Cajazeiras", "Guarabira", "Cabedelo", "Mamanguape", "Sapé", "Pombal", "Monteiro", "Princesa Isabel", "Esperança"],
+  PR: ["Curitiba", "Londrina", "Maringá", "Ponta Grossa", "Cascavel", "São José dos Pinhais", "Foz do Iguaçu", "Colombo", "Guarapuava", "Paranaguá", "Araucária", "Toledo", "Apucarana", "Pinhais", "Campo Largo", "Almirante Tamandaré", "Umuarama", "Piraquara", "Cambé", "Paranavaí"],
+  PE: ["Recife", "Jaboatão dos Guararapes", "Olinda", "Caruaru", "Petrolina", "Paulista", "Cabo de Santo Agostinho", "Camaragibe", "Garanhuns", "Vitória de Santo Antão", "Igarassu", "São Lourenço da Mata", "Abreu e Lima", "Santa Cruz do Capibaribe", "Ipojuca"],
+  PI: ["Teresina", "Parnaíba", "Picos", "Piripiri", "Floriano", "Campo Maior", "Barras", "União", "Altos", "Pedro II", "Oeiras", "São Raimundo Nonato", "Esperantina", "Valença do Piauí", "Luís Correia"],
+  RJ: ["Rio de Janeiro", "São Gonçalo", "Duque de Caxias", "Nova Iguaçu", "Niterói", "Belford Roxo", "Campos dos Goytacazes", "São João de Meriti", "Petrópolis", "Volta Redonda", "Magé", "Itaboraí", "Macaé", "Cabo Frio", "Nova Friburgo", "Barra Mansa", "Angra dos Reis", "Mesquita", "Teresópolis", "Nilópolis"],
+  RN: ["Natal", "Mossoró", "Parnamirim", "São Gonçalo do Amarante", "Macaíba", "Ceará-Mirim", "Caicó", "Assu", "Currais Novos", "São José de Mipibu", "Nova Cruz", "Pau dos Ferros", "Santa Cruz", "Apodi", "João Câmara"],
+  RS: ["Porto Alegre", "Caxias do Sul", "Pelotas", "Canoas", "Santa Maria", "Gravataí", "Viamão", "Novo Hamburgo", "São Leopoldo", "Rio Grande", "Alvorada", "Passo Fundo", "Sapucaia do Sul", "Uruguaiana", "Santa Cruz do Sul", "Cachoeirinha", "Bagé", "Bento Gonçalves", "Erechim", "Guaíba"],
+  RO: ["Porto Velho", "Ji-Paraná", "Ariquemes", "Vilhena", "Cacoal", "Jaru", "Rolim de Moura", "Guajará-Mirim", "Pimenta Bueno", "Buritis", "Ouro Preto do Oeste", "Espigão d'Oeste", "Colorado do Oeste", "Cerejeiras", "Machadinho d'Oeste"],
+  RR: ["Boa Vista", "Rorainópolis", "Caracaraí", "Mucajaí", "Alto Alegre", "Bonfim", "Cantá", "Normandia", "Pacaraima", "São João da Baliza"],
+  SC: ["Florianópolis", "Joinville", "Blumenau", "São José", "Criciúma", "Chapecó", "Itajaí", "Jaraguá do Sul", "Lages", "Palhoça", "Balneário Camboriú", "Brusque", "Tubarão", "São Bento do Sul", "Caçador", "Camboriú", "Navegantes", "Concórdia", "Rio do Sul", "Araranguá"],
+  SP: ["São Paulo", "Guarulhos", "Campinas", "São Bernardo do Campo", "Santo André", "Osasco", "São José dos Campos", "Ribeirão Preto", "Sorocaba", "Mauá", "São José do Rio Preto", "Santos", "Mogi das Cruzes", "Diadema", "Jundiaí", "Carapicuíba", "Piracicaba", "Bauru", "Itaquaquecetuba", "São Vicente", "Franca", "Guarujá", "Taubaté", "Praia Grande", "Limeira", "Suzano", "Taboão da Serra", "Sumaré", "Barueri", "Embu das Artes"],
+  SE: ["Aracaju", "Nossa Senhora do Socorro", "Lagarto", "Itabaiana", "Estância", "São Cristóvão", "Propriá", "Tobias Barreto", "Simão Dias", "Laranjeiras", "Barra dos Coqueiros", "Itabaianinha", "Umbaúba", "Indiaroba", "Poço Verde"],
+  TO: ["Palmas", "Araguaína", "Gurupi", "Porto Nacional", "Paraíso do Tocantins", "Colinas do Tocantins", "Guaraí", "Tocantinópolis", "Miracema do Tocantins", "Araguatins", "Dianópolis", "Formoso do Araguaia", "Pedro Afonso", "Augustinópolis", "Taguatinga"]
+};
+
 export default function CadastroPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -35,7 +66,9 @@ export default function CadastroPage() {
     
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
+      // Limpar cidade quando mudar o estado
+      ...(name === "uf" ? { cidade: "" } : {})
     }));
 
     // Limpar erro do campo
@@ -89,20 +122,43 @@ export default function CadastroPage() {
 
     setLoading(true);
 
-    // Simular salvamento (aqui você integraria com seu backend/Supabase)
-    setTimeout(() => {
-      // Salvar dados no localStorage temporariamente
-      localStorage.setItem("cadastro_pendente", JSON.stringify({
-        ...formData,
-        id: Date.now(),
-        status: "pendente_pagamento",
-        criadoEm: new Date().toISOString()
-      }));
+    try {
+      // Chamar API de cadastro
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: formData.nome,
+          email: formData.email,
+          senha: formData.senha,
+          cidade: formData.cidade,
+          uf: formData.uf,
+          dataNascimento: formData.dataNascimento,
+          genero: formData.genero,
+        }),
+      });
 
-      // Redirecionar para Kiwify
-      window.location.href = "https://pay.kiwify.com.br/BZSQnpu";
-    }, 1000);
+      const data = await response.json();
+
+      if (response.ok) {
+        // Salvar dados do usuário temporariamente
+        localStorage.setItem("casualmatch_user", JSON.stringify(data.user));
+        
+        // Redirecionar para Kiwify com link correto
+        window.location.href = "https://pay.kiwify.com.br/45SDQNS";
+      } else {
+        setErrors({ geral: data.error || "Erro ao criar conta" });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      setErrors({ geral: "Erro ao conectar com o servidor" });
+      setLoading(false);
+    }
   };
+
+  // Obter cidades do estado selecionado
+  const cidadesDisponiveis = formData.uf ? cidadesPorEstado[formData.uf] || [] : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
@@ -132,6 +188,12 @@ export default function CadastroPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="bg-gradient-to-br from-gray-900/50 to-black/50 border border-red-500/20 rounded-2xl p-8 space-y-6">
+            {errors.geral && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-red-400 text-sm">
+                {errors.geral}
+              </div>
+            )}
+
             {/* Nome */}
             <div>
               <label htmlFor="nome" className="block text-sm font-semibold mb-2">
@@ -203,25 +265,9 @@ export default function CadastroPage() {
 
             {/* Localização */}
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
-                <label htmlFor="cidade" className="block text-sm font-semibold mb-2">
-                  Cidade *
-                </label>
-                <input
-                  type="text"
-                  id="cidade"
-                  name="cidade"
-                  value={formData.cidade}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-lg focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder="Sua cidade"
-                />
-                {errors.cidade && <p className="text-red-400 text-sm mt-1">{errors.cidade}</p>}
-              </div>
-
               <div>
                 <label htmlFor="uf" className="block text-sm font-semibold mb-2">
-                  UF *
+                  Estado *
                 </label>
                 <select
                   id="uf"
@@ -230,12 +276,34 @@ export default function CadastroPage() {
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-lg focus:border-red-500 focus:outline-none transition-colors"
                 >
-                  <option value="">UF</option>
+                  <option value="">Selecione</option>
                   {estados.map(estado => (
                     <option key={estado} value={estado}>{estado}</option>
                   ))}
                 </select>
                 {errors.uf && <p className="text-red-400 text-sm mt-1">{errors.uf}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="cidade" className="block text-sm font-semibold mb-2">
+                  Cidade *
+                </label>
+                <select
+                  id="cidade"
+                  name="cidade"
+                  value={formData.cidade}
+                  onChange={handleChange}
+                  disabled={!formData.uf}
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-lg focus:border-red-500 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">
+                    {formData.uf ? "Selecione a cidade" : "Selecione o estado primeiro"}
+                  </option>
+                  {cidadesDisponiveis.map(cidade => (
+                    <option key={cidade} value={cidade}>{cidade}</option>
+                  ))}
+                </select>
+                {errors.cidade && <p className="text-red-400 text-sm mt-1">{errors.cidade}</p>}
               </div>
             </div>
 
@@ -324,7 +392,7 @@ export default function CadastroPage() {
               disabled={loading}
               className="w-full py-4 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 rounded-lg font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? "Processando..." : "Continuar para o Pagamento (R$ 19,90)"}
+              {loading ? "Processando..." : "Continuar para o Pagamento (R$ 19,90/mês)"}
             </button>
 
             <p className="text-center text-sm text-gray-500">

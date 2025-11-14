@@ -26,7 +26,7 @@ export async function signUp(data: SignUpData) {
 
     // Inserir usuário no banco
     const { data: user, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .insert([
         {
           email: data.email,
@@ -58,7 +58,7 @@ export async function signIn(data: SignInData) {
   try {
     // Buscar usuário por email
     const { data: user, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .select('*')
       .eq('email', data.email)
       .single();
@@ -90,9 +90,9 @@ export async function signIn(data: SignInData) {
 export async function checkSubscriptionStatus(userId: string) {
   try {
     const { data: subscription, error } = await supabase
-      .from('subscriptions')
+      .from('assinaturas')
       .select('*')
-      .eq('user_id', userId)
+      .eq('usuario_id', userId)
       .eq('status', 'active')
       .single();
 
@@ -117,7 +117,7 @@ export async function checkSubscriptionStatus(userId: string) {
 export async function updateUserStatus(userId: string, status: string) {
   try {
     const { error } = await supabase
-      .from('users')
+      .from('usuarios')
       .update({ status, atualizado_em: new Date().toISOString() })
       .eq('id', userId);
 
@@ -136,7 +136,7 @@ export async function updateUserStatus(userId: string, status: string) {
 export async function getUserById(userId: string) {
   try {
     const { data: user, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .select('*')
       .eq('id', userId)
       .single();
